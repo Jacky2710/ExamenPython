@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: API Usuarios - OpenAPI 3.0
+  description: |-
+    Esta es una API de usuarios basada en la especificación OpenAPI 3.0.
+    Some useful links:
+    - [El repositorio de la API](https://github.com/Jacky2710/ExamenPython)
+    - [Documentación de SWAPI](https://swapi.dev/documentation)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: jacky2710@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+
+externalDocs:
+  description: Más información sobre Swagger
+  url: https://jacky.jeotech.x10.mx
+
+servers:
+  - url: https://swapi.dev/api/
+
+tags:
+  - name: users
+    description: Operaciones relacionadas con los usuarios
+
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      summary: Obtener todos los usuarios
+      description: Devuelve una lista de todos los usuarios registrados.
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Lista de usuarios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Error interno del servidor
+
+  /users/create:
+    post:
+      tags:
+        - users
+      summary: Crear un nuevo usuario
+      description: Crea un usuario con los datos proporcionados.
+      operationId: createUser
+      requestBody:
+        description: Datos del usuario a crear
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+        '400':
+          description: Datos inválidos
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Iniciar sesión de usuario
+      description: Verifica las credenciales del usuario y devuelve un token JWT.
+      operationId: loginUser
+      requestBody:
+        description: Credenciales de inicio de sesión
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Credenciales inválidas
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "johndoe@example.com"

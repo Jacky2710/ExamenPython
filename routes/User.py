@@ -1,27 +1,21 @@
 from flask import Blueprint, request, jsonify
 from controllers.userController import users, crear, login
 
-user_bp=Blueprint('users', __name__)
+user_bp = Blueprint('users', __name__)
 
-@user_bp.route('/', methods=['GET'])
+@user_bp.route('/users', methods=['GET'])
 def index():
-    user = users()
-    return jsonify(user)
+    return users()
 
-@user_bp.route('/crear', methods=['POST'])
+@user_bp.route('/users/create', methods=['POST'])
 def create():
     data = request.get_json()
     name = data.get('name')
     email = data.get('email')
     password = data.get('password')
-    new= crear(name, email, password)
-    return jsonify(new)
+    return crear(name, email, password)
 
-
-
-
-
-@user_bp.route('/login', methods=['POST'])
-def login():
-    data=request.get_json()
+@user_bp.route('/users/login', methods=['POST'])
+def login_route():
+    data = request.get_json()
     return login(data['email'], data['password'])

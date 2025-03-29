@@ -5,32 +5,31 @@ from flask_jwt_extended import create_access_token
 
 def users():
     try:
-        return [user.to_dict() for user in User.query.all()]
+        users_list = [user.to_dict() for user in User.query.all()]
+        return jsonify(users_list)
     except Exception as e:
-        return jsonify(e)
+        return jsonify({"error": str(e)}), 500
 
 def crear(name, email, password):
     try:
         new_user = User(name, email, password)
         db.session.add(new_user)
         db.session.commit()
-        return new_user.to_dict()
+        return jsonify(new_user.to_dict()), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"{e}"})
-
-
+        return jsonify({"error": f"{e}"}), 400
 
 def login(email, password):
-    user=User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
-        access_token=create_access_token(identity=user.id)
+        access_token = create_access_token(identity=user.id)
         return jsonify({
             'access_token': access_token,
-            'user':{
+            'user': {
                 "id": user.id,
                 "name": user.name,
                 "email": user.email
             }
-        })
-    return jsonify({"msg": "Credenciales invalidad"}), 401
+        }), 200
+    return jsonify({"msg": "Credenciales inválidas"}), 401
